@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact - ArtisanFind</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-blue-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-blue-600">ArtisanFind</h1>
+        </div>
+        <nav class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <a href="{% url 'index' %}"class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm">Accueil</a>
+            <a href="{% url 'metiers' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm">Métiers</a>
+            <a href="{% url 'a_propos' %}"class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm">À propos</a>
+            <a href="{% url 'contact' %}"  class="text-blue-600 font-semibold px-3 py-2 rounded-md text-sm">Contact</a>
+          </div>
+        </nav>
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'inscription_artisan' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+            Inscription artisan
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section contact -->
+<main class="py-16 px-4 bg-white">
+  <div class="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-xl p-8">
+    <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">Contactez-nous</h2>
+    <p class="text-gray-600 mb-8 text-center">
+      Une question ? Besoin d’aide ? Remplissez le formulaire ci-dessous et notre équipe vous répondra rapidement.
+    </p>
+<!-- contact.html -->
+<div class="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6">
+        <h1 class="text-2xl font-bold mb-4">Contactez-nous</h1>
+
+        {% if success %}
+            <div class="p-4 mb-4 text-green-800 bg-green-100 rounded-lg">
+                Votre message a été envoyé avec succès.
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="mb-4">
+                {{ form.nom.label_tag }}
+                {{ form.nom }}
+                {% for error in form.nom.errors %}
+                    <p class="text-red-500 text-sm">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% for error in form.email.errors %}
+                    <p class="text-red-500 text-sm">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.message.label_tag }}
+                {{ form.message }}
+                {% for error in form.message.errors %}
+                    <p class="text-red-500 text-sm">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                Envoyer
+            </button>
+        </form>
+    </div>
+
+  </div>
+</main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="col-span-1 md:col-span-2">
+          <h3 class="text-2xl font-bold text-blue-400 mb-4">ArtisanFind</h3>
+          <p class="text-gray-300 mb-4 max-w-md">
+            La plateforme de référence pour trouver des artisans qualifiés et fiables près de chez vous. Devis gratuits, interventions rapides.
+          </p>
+          <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+            <div class="flex items-center text-gray-300">
+              <span class="icon-phone mr-2"></span>
+              <span>01 23 45 67 89</span>
+            </div>
+            <div class="flex items-center text-gray-300">
+              <span class="icon-mail mr-2"></span>
+              <span>contact@artisanfind.fr</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4">Navigation</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li><a href="index.html" class="hover:text-blue-400">Accueil</a></li>
+            <li><a href="metiers.html" class="hover:text-blue-400">Métiers</a></li>
+            <li><a href="a-propos.html" class="hover:text-blue-400">À propos</a></li>
+            <li><a href="contact.html" class="hover:text-blue-400">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4">Services</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li><a href="#" class="hover:text-blue-400">Devis gratuit</a></li>
+            <li><a href="#" class="hover:text-blue-400">Urgence 24h/7j</a></li>
+            <li><a href="#" class="hover:text-blue-400">Garantie travaux</a></li>
+            <li><a href="#" class="hover:text-blue-400">Assurance</a></li>
+            <li><a href="#" class="hover:text-blue-400">Support client</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm">© 2024 ArtisanFind. Tous droits réservés.</p>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="#" class="text-gray-400 hover:text-blue-400 text-sm">Mentions légales</a>
+          <a href="#" class="text-gray-400 hover:text-blue-400 text-sm">CGU</a>
+          <a href="#" class="text-gray-400 hover:text-blue-400 text-sm">Confidentialité</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

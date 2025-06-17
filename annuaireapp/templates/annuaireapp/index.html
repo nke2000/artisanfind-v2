@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtisanFind - Trouvez des artisans de confiance</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-blue-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <h1 class="text-2xl font-bold text-blue-600">ArtisanFind</h1>
+        <nav class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <a href="{% url 'index' %}" class="text-blue-600 font-semibold px-3 py-2 rounded-md text-sm transition-colors">Accueil</a>
+            <a href="{% url 'metiers' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm transition-colors">Métiers</a>
+            <a href="{% url 'a_propos' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm transition-colors">À propos</a>
+            <a href="{% url 'contact' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm transition-colors">Contact</a>
+            {% if request.session.preinscription_email %}
+              <form method="POST" action="{% url 'deconnexion' %}">
+                {% csrf_token %}
+                <button type="submit" class="ml-4 text-red-600 hover:underline">Déconnexion</button>
+              </form>
+            {% endif %}
+          </div>
+        </nav>
+        <button onclick="openSignupModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+          Inscription artisan
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-r from-blue-600 to-blue-800 py-20 px-4">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+        Trouvez votre artisan
+        <span class="block text-yellow-400">de confiance</span>
+      </h1>
+      <p class="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
+        Découvrez des artisans qualifiés et fiables près de chez vous. 
+        Comparez les avis, les tarifs et contactez directement.
+      </p>
+
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">🚨 Urgence 24h/7j</span>
+        <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">💰 Devis gratuit</span>
+        <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">✅ Artisans vérifiés</span>
+        <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">🔒 Paiement sécurisé</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Placeholder artisans pour JS -->
+  <div id="artisans-data" class="hidden">
+    {% for artisan in artisans %}
+    <div class="artisan-card bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow duration-300">
+      {% if artisan.photos %}
+        <img src="{{ artisan.photos.url }}" alt="{{ artisan.nom }}" class="w-full h-48 object-cover rounded-md mb-4">
+      {% else %}
+        <div class="w-full h-48 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 mb-4">Pas de photo</div>
+      {% endif %}
+      <h3 class="text-lg font-semibold text-gray-900">{{ artisan.nom }}</h3>
+      <p class="text-blue-600 font-medium">{{ artisan.metier }}</p>
+      <p class="text-gray-600 text-sm mt-1">{{ artisan.telephone }}</p>
+      <button onclick="openMapModal('{{ artisan.localisation|urlencode }}')" class="flex items-center text-blue-600 text-sm mt-1 hover:underline">
+        Voir sur la carte
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+<!-- Artisan List -->
+<div id="artisans-data" class="hidden">
+  {% for artisan in artisans %}
+    <div class="artisan-card bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow duration-300">
+      {% if artisan.photos %}
+        <img src="{{ artisan.photos.url }}" alt="{{ artisan.nom }}" class="w-full h-48 object-cover rounded-md mb-4">
+      {% else %}
+        <div class="w-full h-48 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 mb-4">
+          Pas de photo
+        </div>
+      {% endif %}
+
+      <h3 class="text-lg font-semibold text-gray-900">{{ artisan.nom }} {{ artisan.prenom }}</h3>
+      <p class="text-blue-600 font-medium">{{ artisan.metier }}</p>
+      <p class="text-gray-600 text-sm mt-1">{{ artisan.telephone }}</p>
+
+      <button 
+        onclick="openMapModal('{{ artisan.localisation|urlencode }}')" 
+        class="flex items-center text-blue-600 text-sm mt-1 hover:underline"
+      >
+        <svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 20s6-4.686 6-10a6 6 0 10-12 0c0 5.314 6 10 6 10zm0-12a2 2 0 110 4 2 2 0 010-4z" clip-rule="evenodd"/>
+        </svg>
+        Voir sur la carte
+      </button>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Conteneur visible -->
+<div id="artisans-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  <!-- Les artisans visibles seront injectés ici par JS -->
+</div>
+  <!-- Affichage dynamique -->
+  <div id="artisans-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="col-span-1 md:col-span-2">
+        <h3 class="text-2xl font-bold text-blue-400 mb-4">ArtisanFind</h3>
+        <p class="text-gray-300 mb-4">La plateforme de référence pour trouver des artisans qualifiés et fiables près de chez vous. Devis gratuits, interventions rapides.</p>
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+          <div class="flex items-center text-gray-300">📞 01 23 45 67 89</div>
+          <div class="flex items-center text-gray-300">✉️ contact@artisanfind.fr</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Métiers</h4>
+        <ul class="space-y-2 text-gray-300">
+          <li>Plomberie</li><li>Électricité</li><li>Menuiserie</li><li>Maçonnerie</li><li>Peinture</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Services</h4>
+        <ul class="space-y-2 text-gray-300">
+          <li>Devis gratuit</li><li>Urgence 24h/7j</li><li>Garantie travaux</li><li>Assurance</li><li>Support client</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+      © 2024 ArtisanFind. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Modal Localisation -->
+  <div id="mapModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg max-w-2xl w-full shadow-lg relative">
+      <button onclick="closeMapModal()" class="absolute top-2 right-2 text-gray-600 hover:text-red-500">✕</button>
+      <div class="p-4">
+        <h3 class="text-lg font-semibold mb-2">Localisation de l’artisan</h3>
+        <iframe id="mapIframe" src="" width="100%" height="350" frameborder="0" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-md"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Inscription -->
+  <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl w-full max-w-md shadow-lg relative p-6">
+      <button onclick="closeSignupModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl">×</button>
+      <h2 class="text-xl font-bold text-blue-600 mb-4 text-center">Inscription Artisan</h2>
+      <form id="signupForm" class="space-y-4">
+        <input type="email" id="email" required placeholder="Email" class="w-full border border-gray-300 rounded-md px-3 py-2">
+        <input type="password" id="password" required placeholder="Mot de passe" class="w-full border border-gray-300 rounded-md px-3 py-2">
+        <input type="password" id="confirm-password" required placeholder="Confirmer mot de passe" class="w-full border border-gray-300 rounded-md px-3 py-2">
+        <div class="flex justify-between pt-4">
+          <button type="button" onclick="window.location.href='connexion'" class="text-sm text-gray-600 hover:underline">connexion</button>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">S’inscrire</button>
+        </div>
+      </form>
+    </div>
+  </div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const hiddenContainer = document.getElementById("artisans-data");
+    const visibleContainer = document.getElementById("artisans-container");
+
+    if (hiddenContainer && visibleContainer) {
+      const cards = hiddenContainer.querySelectorAll(".artisan-card");
+      cards.forEach(card => {
+        visibleContainer.appendChild(card.cloneNode(true));
+      });
+    }
+  });
+</script>
+
+  <!-- Scripts -->
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirm = document.getElementById("confirm-password").value;
+
+      if (password !== confirm) {
+        alert("Les mots de passe ne correspondent pas.");
+        return;
+      }
+
+      const response = await fetch("{% url 'pre_inscription' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.message === "OK") {
+        window.location.href = "{% url 'inscription_artisan' %}";
+      } else {
+        alert(data.erreur || "Erreur inconnue lors de l’inscription.");
+      }
+    });
+
+    function openSignupModal() {
+      document.getElementById("signupModal").classList.remove("hidden");
+    }
+
+    function closeSignupModal() {
+      document.getElementById("signupModal").classList.add("hidden");
+    }
+
+    function openMapModal(locationUrl) {
+      document.getElementById("mapIframe").src = decodeURIComponent(locationUrl);
+      document.getElementById("mapModal").classList.remove("hidden");
+    }
+
+    function closeMapModal() {
+      document.getElementById("mapModal").classList.add("hidden");
+    }
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
