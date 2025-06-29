@@ -1,15 +1,14 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Connexion - ArtisanFind</title>
+  <title>Inscription Artisan - ArtisanFind</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
-  <!-- Header -->
+  <!-- Header / Navbar -->
   <header class="bg-white shadow-sm border-b border-blue-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
@@ -24,11 +23,10 @@
     </div>
   </header>
 
-  <!-- Connexion Form -->
-  <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-      <h2 class="text-2xl font-bold text-center text-blue-600 mb-6">Connexion</h2>
-
+  <!-- Formulaire -->
+  <main class="flex-grow flex items-center justify-center px-4">
+    <div class="bg-white rounded-xl w-full max-w-md shadow-lg p-6 mt-6">
+      <h2 class="text-xl font-bold text-blue-600 mb-4 text-center">Inscription Artisan</h2>
 {% if messages %}
   {% for message in messages %}
     <div class="alert-message bg-red-100 text-red-800 px-4 py-2 rounded mb-4 text-sm">
@@ -36,18 +34,16 @@
     </div>
   {% endfor %}
 {% endif %}
-
-      <form method="POST" class="space-y-4">
+      <form id="signupForm" method="POST" class="space-y-4">
         {% csrf_token %}
-        <input type="email" name="email" placeholder="Email" class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-        <input type="password" name="password" placeholder="Mot de passe" class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold">Se connecter</button>
+        <input type="email" name="email" required placeholder="Email" class="w-full border border-gray-300 rounded-md px-3 py-2">
+        <input type="password" name="password" required placeholder="Mot de passe" class="w-full border border-gray-300 rounded-md px-3 py-2">
+        <input type="password" name="confirm_password" required placeholder="Confirmer mot de passe" class="w-full border border-gray-300 rounded-md px-3 py-2">
+        <div class="flex justify-between pt-4">
+          <a href="{% url 'connexion' %}" class="text-sm text-gray-600 hover:underline">Connexion</a>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">S’inscrire</button>
+        </div>
       </form>
-
-      <p class="text-center text-sm text-gray-600 mt-4">
-        Vous n'avez pas de compte ?
-        <a href="{% url 'inscription_preliminaire' %}" class="text-blue-600 hover:underline">Inscrivez-vous</a>
-      </p>
     </div>
   </main>
 

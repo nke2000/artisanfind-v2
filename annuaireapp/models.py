@@ -1,28 +1,52 @@
-# models.py
+
 from django.db import models
+from datetime import date
 
 class Artisan(models.Model):
-    METIERS_CHOICES = [
-        ("Plombier", "Plombier"),
-        ("Électricien", "Électricien"),
-        ("Menuisier", "Menuisier"),
-        ("Maçon", "Maçon"),
-        ("Peintre", "Peintre"),
-    ]
-
-    nom = models.CharField(max_length=255)
+    nom = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
-    telephone = models.CharField(max_length=10)
-    ville = models.CharField(max_length=100)
-    localisation = models.CharField(max_length=100, blank=True)
-    metier = models.CharField(max_length=50, choices=METIERS_CHOICES)
-    experience = models.PositiveIntegerField(null=True, blank=True)
+    password = models.CharField(max_length=255)
+    telephone = models.CharField(max_length=20, blank=True)
+    ville = models.CharField(max_length=100, blank=True)
+
+    # Métier : choix parmi la liste + possibilité autre
+    METIER_CHOICES = [
+        ('Plombier', 'Plombier'),
+        ('Électricien', 'Électricien'),
+        ('Menuisier', 'Menuisier'),
+        ('Maçon', 'Maçon'),
+        ('Peintre', 'Peintre'),
+        ('autre', 'Autre'),
+    ]
+    metier = models.CharField(max_length=50, choices=METIER_CHOICES)
+    nouveau_metier = models.CharField(max_length=100, blank=True, null=True)
+
+    # Année de début (ex: 2015)
+    date_debut_activite = models.IntegerField(blank=True, null=True)
+
+    # Calculée automatiquement à partir de l'année de début
+    experience = models.IntegerField(blank=True, null=True)
+
     description = models.TextField(blank=True)
-    photos = models.ImageField(upload_to='artisan_photos/', blank=True, null=True)
-    mot_de_passe = models.CharField(max_length=255)  # à hasher !
+    photos = models.ImageField(upload_to='artisans_photos/', blank=True, null=True)
+
+    def calculer_experience(self):
+        """Retourne le nombre d'années d'expérience à partir de l'année de début."""
+        if self.date_debut_activite:
+            annee_actuelle = date.today().year
+            return max(0, annee_actuelle - self.date_debut_activite)
+        return None
+
+    def save(self, *args, **kwargs):
+        self.experience = self.calculer_experience()
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.nom} - {self.metier}"
+        return self.nom
+
+def save(self, *args, **kwargs):
+    self.experience = self.calculer_experience()
+    super().save(*args, **kwargs)
 
 
 

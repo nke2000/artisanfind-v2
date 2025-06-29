@@ -23,11 +23,31 @@
             <a href="{% url 'contact' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm">Contact</a>
           </div>
         </nav>
-        <div class="flex items-center space-x-4">
-          <a href="{% url 'inscription_artisan' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-            Inscription artisan
-          </a>
-        </div>
+      <!-- Boutons à droite -->
+      <div class="flex space-x-4">
+         <!-- Bouton dynamique : Modifier profil ou Inscription artisan -->
+        {% if request.session.artisan_email %}
+        <button onclick="window.location.href='{% url 'inscription_artisan' %}'"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+          Modifier mon  profil
+        </button>
+        {% else %}
+        <button onclick="window.location.href='{% url 'inscription_preliminaire' %}'"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+          Inscription artisan
+        </button>
+        {% endif %}
+
+        <!-- Bouton Déconnexion si connecté -->
+        {% if request.session.artisan_email %}
+        <form action="{% url 'deconnexion' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">
+            Déconnexion
+          </button>
+        </form>
+        {% endif %}
+      </div>
       </div>
     </div>
   </header>
