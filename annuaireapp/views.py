@@ -7,7 +7,8 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from collections import defaultdict
-
+from django.db.models import Q
+import unicodedata
 
 def detail_artisan_modal(request, artisan_id):
     artisan = get_object_or_404(Artisan, id=artisan_id)
@@ -15,8 +16,49 @@ def detail_artisan_modal(request, artisan_id):
     return JsonResponse({'html': html})
 # Page d'accueil
 def index(request):
-    artisans = Artisan.objects.all()
-    return render(request, 'annuaireapp/index.html', {'artisans': artisans})
+    ville = request.GET.get('ville', '').strip()
+    metier = request.GET.get('metier', '').strip()
+    nouveau_metier = request.GET.get('nouveau_metier', '').strip()
+    keyword = request.GET.get('keyword', '').strip()
+
+    ville_norm = normalize(ville)
+    metier_norm = normalize(nouveau_metier if metier == 'autre' else metier)
+    keyword_norm = normalize(keyword)
+
+    artisans = Artisan.objects.filter(profil_complet=True)
+
+    if not (ville or metier or keyword):
+        artisans = artisans[:15]
+    else:
+        filtered_artisans = []
+        for artisan in artisans:
+            ville_artisan = normalize(artisan.ville)
+            metier_artisan = normalize(
+                artisan.nouveau_metier if artisan.metier == 'autre' and artisan.nouveau_metier else artisan.metier
+            )
+            nom_artisan = normalize(artisan.nom)
+            description_artisan = normalize(artisan.description or "")
+
+            if (
+                (not ville or ville_norm in ville_artisan) and
+                (not metier or metier_norm in metier_artisan) and
+                (not keyword or (keyword_norm in nom_artisan or keyword_norm in description_artisan))
+            ):
+                filtered_artisans.append(artisan)
+
+        artisans = filtered_artisans
+
+    context = {
+        'artisans': artisans,
+        'metier_choices': Artisan.METIER_CHOICES,
+        'ville': ville,
+        'metier': metier,
+        'nouveau_metier': nouveau_metier,
+        'keyword': keyword,
+    }
+
+    return render(request, 'annuaireapp/index.html', context)
+
 
 
 def inscription_artisan(request):
@@ -126,7 +168,9 @@ def inscription_artisan(request):
             artisan.date_debut_activite = date_debut
             artisan.description = description
             artisan.photos = photo or artisan.photos
+            artisan.profil_complet = True
             artisan.save()
+
 
             messages.success(request, "Profil complété avec succès.")
             return redirect('index')
@@ -165,3 +209,14 @@ def metiers(request):
         'metiers_data': metiers_data
     })
 
+
+def normalize(text):
+    """
+    Supprime les accents et convertit le texte en minuscule.
+    """
+    if not text:
+        return ''
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', text)
+        if unicodedata.category(c) != 'Mn'
+    ).lower()

@@ -8,7 +8,7 @@ class Artisan(models.Model):
     password = models.CharField(max_length=255)
     telephone = models.CharField(max_length=20, blank=True)
     ville = models.CharField(max_length=100, blank=True)
-
+    profil_complet = models.BooleanField(default=False)
     # Métier : choix parmi la liste + possibilité autre
     METIER_CHOICES = [
         ('Plombier', 'Plombier'),

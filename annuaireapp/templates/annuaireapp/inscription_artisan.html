@@ -75,18 +75,18 @@
         <!-- Métier -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Métier</label>
-<select name="metier" id="metier-select" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-  {% for value, label in metier_choices %}
-    {% if value != 'autre' %}
-      <option value="{{ value }}" {% if artisan.metier == value %}selected{% endif %}>{{ label }}</option>
-    {% endif %}
-  {% endfor %}
-  {% if artisan.metier == 'autre' %}
-    <option value="autre" selected>Autre...</option>
-  {% endif %}
-</select>
-
-
+          <select name="metier" id="metier-select" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            {% for value, label in metier_choices %}
+              {% if value != 'autre' %}
+                <option value="{{ value }}" {% if artisan.metier == value %}selected{% endif %}>{{ label }}</option>
+              {% endif %}
+            {% endfor %}
+            {% if artisan.metier == 'autre' %}
+              <option value="autre" selected>Autre...</option>
+            {% else %}
+              <option value="autre">Autre...</option>
+            {% endif %}
+          </select>
         </div>
 
         <!-- Nouveau métier -->
@@ -97,12 +97,9 @@
 
         <!-- Année de début d'activité -->
         <div>
-          <label for="annee_debut_activite"  class="block text-sm font-medium text-gray-700">Année de début d'activité</label>
-          <input type="number" name="annee_debut_activite" id="annee_debut_activite"
-                 value="{{ artisan.date_debut_activite }}"
-                 min="1950" max="2025" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
-
-          <p id="experience_text" required class="text-sm text-green-600 mt-1 {% if not artisan.experience %}hidden{% endif %}">
+          <label for="annee_debut_activite" class="block text-sm font-medium text-gray-700">Année de début d'activité</label>
+          <input type="number" name="annee_debut_activite" id="annee_debut_activite" value="{{ artisan.date_debut_activite }}" min="1950" max="2025" required class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+          <p id="experience_text" class="text-sm text-green-600 mt-1 {% if not artisan.experience %}hidden{% endif %}">
             {% if artisan.experience %}{{ artisan.experience }} an{% if artisan.experience > 1 %}s{% endif %} d'expérience.{% endif %}
           </p>
         </div>
@@ -117,14 +114,14 @@
         {% if artisan.photos %}
           <div>
             <p class="text-sm text-gray-600 mb-1">Photo actuelle :</p>
-            <img src="{{ artisan.photos.url }}" required class="w-32 h-32 object-cover rounded mb-2" />
+            <img src="{{ artisan.photos.url }}" class="w-32 h-32 object-cover rounded mb-2" />
           </div>
         {% endif %}
 
         <!-- Nouvelle photo -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Changer la photo</label>
-          <input type="file" name="photos" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+          <input type="file" name="photos" {% if not artisan.photos %}required{% endif %} class="w-full border border-gray-300 rounded-lg px-4 py-2" />
         </div>
 
         <!-- Bouton -->
@@ -147,17 +144,21 @@
     document.addEventListener("DOMContentLoaded", function () {
       const metierSelect = document.getElementById("metier-select");
       const nouveauMetierDiv = document.getElementById("nouveau-metier-div");
+      const nouveauMetierInput = document.getElementById("nouveau_metier");
 
       function toggleNouveauMetier() {
         if (metierSelect.value === "autre") {
           nouveauMetierDiv.classList.remove("hidden");
+          nouveauMetierInput.setAttribute("required", "required");
         } else {
           nouveauMetierDiv.classList.add("hidden");
+          nouveauMetierInput.removeAttribute("required");
+          nouveauMetierInput.value = "";
         }
       }
 
       metierSelect.addEventListener("change", toggleNouveauMetier);
-      toggleNouveauMetier(); // appel initial
+      toggleNouveauMetier();
     });
   </script>
 
@@ -170,10 +171,9 @@
       function updateExperience() {
         const currentYear = new Date().getFullYear();
         const enteredYear = parseInt(input.value);
-
         if (!isNaN(enteredYear) && enteredYear >= 1950 && enteredYear <= currentYear) {
           const experience = currentYear - enteredYear;
-          output.textContent = ` ${experience} an${experience > 1 ? "s" : ""} d'expérience.`;
+          output.textContent = `${experience} an${experience > 1 ? "s" : ""} d'expérience.`;
           output.classList.remove("hidden");
         } else {
           output.classList.add("hidden");
@@ -182,7 +182,7 @@
       }
 
       input.addEventListener("input", updateExperience);
-      updateExperience(); // initial
+      updateExperience();
     });
   </script>
 

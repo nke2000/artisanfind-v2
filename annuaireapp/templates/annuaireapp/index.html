@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ArtisanFind - Trouvez des artisans de confiance</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-white">
   <!-- Header -->
@@ -13,174 +12,205 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <h1 class="text-2xl font-bold text-blue-600">ArtisanFind</h1>
-        <nav class="hidden md:block">
-          <div class="ml-10 flex items-baseline space-x-4">
-            <a href="{% url 'index' %}" class="text-blue-600 font-semibold px-3 py-2 rounded-md text-sm transition-colors">Accueil</a>
-            <a href="{% url 'metiers' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm transition-colors">Métiers</a>
-            <a href="{% url 'a_propos' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm transition-colors">À propos</a>
-            <a href="{% url 'contact' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm transition-colors">Contact</a>
-          </div>
+        <button id="mobile-menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
+          ☰
+        </button>
+        <nav class="hidden md:flex space-x-4">
+          <a href="{% url 'index' %}" class="text-blue-600 font-semibold px-3 py-2 text-sm">Accueil</a>
+          <a href="{% url 'metiers' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm">Métiers</a>
+          <a href="{% url 'a_propos' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm">À propos</a>
+          <a href="{% url 'contact' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm">Contact</a>
         </nav>
-
-      <!-- Boutons à droite -->
-      <div class="flex space-x-4">
-         <!-- Bouton dynamique : Modifier profil ou Inscription artisan -->
-        {% if request.session.artisan_email %}
-        <button onclick="window.location.href='{% url 'inscription_artisan' %}'"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-          Modifier mon  profil
-        </button>
-        {% else %}
-        <button onclick="window.location.href='{% url 'inscription_preliminaire' %}'"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-          Inscription artisan
-        </button>
-        {% endif %}
-
-        <!-- Bouton Déconnexion si connecté -->
-        {% if request.session.artisan_email %}
-        <form action="{% url 'deconnexion' %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">
-            Déconnexion
-          </button>
-        </form>
-        {% endif %}
+        <div class="hidden md:flex space-x-4">
+          {% if request.session.artisan_email %}
+          <button onclick="window.location.href='{% url 'inscription_artisan' %}'" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm">Modifier mon profil</button>
+          <form action="{% url 'deconnexion' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm">Déconnexion</button>
+          </form>
+          {% else %}
+          <button onclick="window.location.href='{% url 'inscription_preliminaire' %}'" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm">Inscription artisan</button>
+          {% endif %}
+        </div>
       </div>
-
-      </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden px-4 py-4 bg-white space-y-2">
+      <a href="{% url 'index' %}" class="block text-blue-600 font-semibold">Accueil</a>
+      <a href="{% url 'metiers' %}" class="block text-gray-700">Métiers</a>
+      <a href="{% url 'a_propos' %}" class="block text-gray-700">À propos</a>
+      <a href="{% url 'contact' %}" class="block text-gray-700">Contact</a>
+      {% if request.session.artisan_email %}
+      <a href="{% url 'inscription_artisan' %}" class="block text-blue-600 font-semibold">Modifier mon profil</a>
+      <form action="{% url 'deconnexion' %}" method="post" class="mt-2">
+        {% csrf_token %}
+        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md text-center">Déconnexion</button>
+      </form>
+      {% else %}
+      <a href="{% url 'inscription_preliminaire' %}" class="block text-blue-600 font-semibold">Inscription artisan</a>
+      {% endif %}
     </div>
   </header>
 
- <!-- Hero Section -->
-<section class="relative bg-gradient-to-r from-blue-600 to-blue-800 py-20 px-4">
-  <div class="absolute inset-0 bg-black opacity-10"></div>
-  <div class="relative max-w-4xl mx-auto text-center">
-    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
-      Trouvez votre artisan
-      <span class="block text-yellow-400">de confiance</span>
-    </h1>
-    <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-      Découvrez des artisans qualifiés et fiables près de chez vous. 
-      Comparez les avis, les tarifs et contactez directement.
-    </p>
-
-    <div class="mt-8 flex flex-wrap justify-center gap-4">
-      <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">🚨 Urgence 24h/7j</span>
-      <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">✅ Artisans vérifiés</span>
-      <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">🔒 Paiement sécurisé</span>
-    </div>
-  </div>
-</section>
-
-<!-- Conteneur artisans -->
-<div id="artisans-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-  {% for artisan in artisans %}
-  <div class="bg-white rounded-xl shadow p-4">
-    {% if artisan.photos %}
-      <img src="{{ artisan.photos.url }}" alt="Photo de {{ artisan.nom }}" class="w-full h-48 object-cover rounded-lg mb-3">
-    {% else %}
-      <div class="w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-500">
-        Pas de photo
+  <!-- Hero -->
+  <section class="relative bg-gradient-to-r from-blue-600 to-blue-800 py-20 px-4">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Trouvez votre artisan <span class="block text-yellow-400">de confiance</span></h1>
+      <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Découvrez des artisans qualifiés et fiables près de chez vous.</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">🚨 Urgence 24h/7j</span>
+        <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">✅ Artisans vérifiés</span>
+        <span class="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium">🔒 Paiement sécurisé</span>
       </div>
-    {% endif %}
-    <h3 class="text-lg font-bold text-blue-600">{{ artisan.nom }}</h3>
-    
-    <p class="text-sm text-gray-700">
-      {% if artisan.metier == "autre" and artisan.nouveau_metier %}
-        {{ artisan.nouveau_metier }}
-      {% else %}
-        {{ artisan.metier }}
-      {% endif %}
-    </p>
+    </div>
+  </section>
 
-    <p class="text-sm text-gray-500">📍 {{ artisan.ville }}</p>
-    <p class="text-sm text-gray-500">📞 {{ artisan.telephone }}</p>
-    
-    {% if artisan.experience is not None %}
-      <p class="text-sm text-gray-500">🛠️ {{ artisan.experience }} an{% if artisan.experience > 1 %}s{% endif %} d'expérience</p>
-    {% endif %}
-    
-    <button data-id="{{ artisan.id }}" class="voir-detail-btn mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-      Voir détail
-    </button>
-  </div>
-  {% empty %}
-    <p class="text-gray-500 col-span-full text-center">Aucun artisan trouvé.</p>
-  {% endfor %}
+  <!-- Filtrage -->
+  <section class="bg-white py-10">
+    <div class="max-w-5xl mx-auto px-4">
+      <form action="{% url 'index' %}" method="get" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Ville</label>
+          <input type="text" name="ville" placeholder="Ex: Abidjan" class="w-full border border-gray-300 rounded-lg px-3 py-2" />
+        </div>
+<!-- Champ métier (select) -->
+<div id="metier-select-container">
+  <label class="block text-sm font-semibold text-gray-700 mb-1">Métier</label>
+  <select id="metier" name="metier" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+    <option value="">Tous les métiers</option>
+    {% for value, label in metier_choices %}
+      <option value="{{ value }}">{{ label }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<!-- Champ "Précisez le métier" (input) -->
+<div id="nouveau-metier-container" class="hidden">
+  <label class="block text-sm font-semibold text-gray-700 mb-1">Précisez le métier</label>
+  <input type="text" name="nouveau_metier" placeholder="Ex : Soudeur, Plâtrier..."
+         class="w-full border border-gray-300 rounded-lg px-3 py-2" />
 </div>
 
 
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Mot-clé</label>
+          <input type="text" name="keyword" placeholder="Nom ou description" class="w-full border border-gray-300 rounded-lg px-3 py-2" />
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold">🔍 Rechercher</button>
+        </div>
+      </form>
+    </div>
+  </section>
 
-<!-- Footer -->
-<footer class="bg-gray-900 text-white">
-  <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-    <div class="col-span-1 md:col-span-2">
-      <h3 class="text-2xl font-bold text-blue-400 mb-4">ArtisanFind</h3>
-      <p class="text-gray-300 mb-4">La plateforme de référence pour trouver des artisans qualifiés et fiables près de chez vous. Devis gratuits, interventions rapides.</p>
-      <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-        <div class="flex items-center text-gray-300">📞 01 23 45 67 89</div>
-        <div class="flex items-center text-gray-300">✉️ contact@artisanfind.fr</div>
+  <!-- Artisans -->
+  <div id="artisans-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+    {% for artisan in artisans %}
+    <div class="bg-white rounded-xl shadow p-4">
+      {% if artisan.photos %}
+        <img src="{{ artisan.photos.url }}" alt="Photo de {{ artisan.nom }}" class="w-full h-48 object-cover rounded-lg mb-3">
+      {% else %}
+        <div class="w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-500">Pas de photo</div>
+      {% endif %}
+      <h3 class="text-lg font-bold text-blue-600">{{ artisan.nom }}</h3>
+      <p class="text-sm text-gray-700">
+        {% if artisan.metier == "autre" and artisan.nouveau_metier %}{{ artisan.nouveau_metier }}
+        {% else %}{{ artisan.metier }}{% endif %}
+      </p>
+      <p class="text-sm text-gray-500">📍 {{ artisan.ville }}</p>
+      <p class="text-sm text-gray-500">📞 {{ artisan.telephone }}</p>
+      {% if artisan.experience is not None %}
+      <p class="text-sm text-gray-500">🛠️ {{ artisan.experience }} an{% if artisan.experience > 1 %}s{% endif %} d'expérience</p>
+      {% endif %}
+      <button data-id="{{ artisan.id }}" class="voir-detail-btn mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Voir détail</button>
+    </div>
+    {% empty %}
+    <p class="text-gray-500 col-span-full text-center">Aucun artisan trouvé.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+      <div class="md:col-span-2">
+        <h3 class="text-2xl font-bold text-blue-400 mb-4">ArtisanFind</h3>
+        <p class="text-gray-300 mb-4">La plateforme de référence pour trouver des artisans qualifiés et fiables près de chez vous.</p>
+        <p class="text-gray-300">📞 01 23 45 67 89 &nbsp;&nbsp; ✉ artisanfind@gmail.com</p>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Métiers</h4>
+        <ul class="space-y-2 text-gray-300">
+          <li>Plomberie</li><li>Électricité</li><li>Menuiserie</li><li>Maçonnerie</li><li>Peinture</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Services</h4>
+        <ul class="space-y-2 text-gray-300">
+          <li>Urgence 24h/7j</li><li>Garantie travaux</li><li>Assurance</li><li>Support client</li>
+        </ul>
       </div>
     </div>
-    <div>
-      <h4 class="text-lg font-semibold mb-4">Métiers</h4>
-      <ul class="space-y-2 text-gray-300">
-        <li>Plomberie</li><li>Électricité</li><li>Menuiserie</li><li>Maçonnerie</li><li>Peinture</li>
-      </ul>
+    <div class="text-center text-gray-400 text-sm border-t border-gray-700 py-4">
+      © 2024 ArtisanFind. Tous droits réservés.
     </div>
-    <div>
-      <h4 class="text-lg font-semibold mb-4">Services</h4>
-      <ul class="space-y-2 text-gray-300">
-        <li>Urgence 24h/7j</li><li>Garantie travaux</li><li>Assurance</li><li>Support client</li>
-      </ul>
-    </div>
-  </div>
-  <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
-    © 2024 ArtisanFind. Tous droits réservés.
-  </div>
-  <a href="#" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-    Devenir artisan
-  </a>
-</footer>
-<!-- Container pour la fenêtre modale -->
-<div id="modalContainer"></div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const modalContainer = document.getElementById("modalContainer");
+  </footer>
 
-  function closeModal() {
-    modalContainer.innerHTML = "";
-  }
+  <!-- Modal Container -->
+  <div id="modalContainer"></div>
 
-  document.querySelectorAll(".voir-detail-btn").forEach(button => {
-    button.addEventListener("click", () => {
-      const artisanId = button.getAttribute("data-id");
-      fetch(`/artisan/${artisanId}/modal/`)
-        .then(response => response.json())
-        .then(data => {
-          modalContainer.innerHTML = data.html;
-
-          const closeBtn = document.getElementById("closeModal");
-          if (closeBtn) {
-            closeBtn.addEventListener("click", closeModal);
-          }
-
-          // Fermer la modale en cliquant à l'extérieur
-          modalContainer.querySelector("div.fixed").addEventListener("click", (e) => {
-            if (e.target === modalContainer.querySelector("div.fixed")) {
-              closeModal();
-            }
-          });
-        })
-        .catch(error => {
-          console.error("Erreur lors du chargement du détail:", error);
-        });
+  <script>
+    document.getElementById("mobile-menu-toggle").addEventListener("click", function () {
+      const menu = document.getElementById("mobile-menu");
+      menu.classList.toggle("hidden");
     });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const modalContainer = document.getElementById("modalContainer");
+      function closeModal() { modalContainer.innerHTML = ""; }
+      document.querySelectorAll(".voir-detail-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const artisanId = button.getAttribute("data-id");
+          fetch(`/artisan/${artisanId}/modal/`)
+            .then(response => response.json())
+            .then(data => {
+              modalContainer.innerHTML = data.html;
+              const closeBtn = document.getElementById("closeModal");
+              if (closeBtn) closeBtn.addEventListener("click", closeModal);
+              modalContainer.querySelector("div.fixed").addEventListener("click", (e) => {
+                if (e.target === modalContainer.querySelector("div.fixed")) closeModal();
+              });
+            })
+            .catch(error => console.error("Erreur de chargement:", error));
+        });
+      });
+    });
+  </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const metierSelect = document.getElementById("metier");
+    const metierContainer = document.getElementById("metier-select-container");
+    const autreMetierContainer = document.getElementById("nouveau-metier-container");
+
+    function toggleMetierFields() {
+      if (metierSelect.value === "autre") {
+        metierContainer.classList.add("hidden");
+        autreMetierContainer.classList.remove("hidden");
+      } else {
+        metierContainer.classList.remove("hidden");
+        autreMetierContainer.classList.add("hidden");
+      }
+    }
+
+    // Appliquer au chargement
+    toggleMetierFields();
+
+    // Écouter le changement
+    metierSelect.addEventListener("change", toggleMetierFields);
   });
-});
 </script>
 
-<script src="script.js"></script>
+
 </body>
 </html>

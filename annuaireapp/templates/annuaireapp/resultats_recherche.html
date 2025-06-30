@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Résultats de la recherche - ArtisanFind</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- En-tête -->
+  <header class="bg-white shadow-sm border-b border-blue-100 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-blue-600">ArtisanFind</h1>
+      <nav class="hidden md:flex space-x-6 text-sm font-medium items-center">
+        <a href="{% url 'index' %}" class="hover:text-blue-600">Accueil</a>
+        <a href="{% url 'metiers' %}" class="hover:text-blue-600">Métiers</a>
+        <a href="{% url 'a_propos' %}" class="hover:text-blue-600">À propos</a>
+        <a href="{% url 'contact' %}" class="hover:text-blue-600">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Titre de la page -->
+  <section class="bg-blue-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-blue-800">Résultats de la recherche</h2>
+      <p class="text-gray-600 mt-2">Voici les artisans correspondant à vos critères</p>
+    </div>
+  </section>
+
+  <!-- Résultats -->
+  <section class="py-10 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+
+      <!-- Conteneur artisans -->
+      <div id="artisans-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+        {% for artisan in artisans %}
+        <div class="bg-white rounded-xl shadow p-4">
+          {% if artisan.photos %}
+            <img src="{{ artisan.photos.url }}" alt="Photo de {{ artisan.nom }}" class="w-full h-48 object-cover rounded-lg mb-3">
+          {% else %}
+            <div class="w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-500">
+              Pas de photo
+            </div>
+          {% endif %}
+          <h3 class="text-lg font-bold text-blue-600">{{ artisan.nom }}</h3>
+          
+          <p class="text-sm text-gray-700">
+            {% if artisan.metier == "autre" and artisan.nouveau_metier %}
+              {{ artisan.nouveau_metier }}
+            {% else %}
+              {{ artisan.metier }}
+            {% endif %}
+          </p>
+
+          <p class="text-sm text-gray-500">📍 {{ artisan.ville }}</p>
+          <p class="text-sm text-gray-500">📞 {{ artisan.telephone }}</p>
+          
+          {% if artisan.experience is not None %}
+            <p class="text-sm text-gray-500">🛠️ {{ artisan.experience }} an{% if artisan.experience > 1 %}s{% endif %} d'expérience</p>
+          {% endif %}
+          
+          <button data-id="{{ artisan.id }}" class="voir-detail-btn mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+            Voir détail
+          </button>
+        </div>
+        {% empty %}
+          <p class="text-gray-500 col-span-full text-center">Aucun artisan trouvé.</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Pied de page -->
+  <footer class="bg-gray-900 text-white text-sm py-6 text-center">
+    <p class="text-gray-400">© 2024 ArtisanFind. Tous droits réservés.</p>
+  </footer>
+
+</body>
+</html>
